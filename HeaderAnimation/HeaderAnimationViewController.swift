@@ -22,7 +22,9 @@ class HeaderAnimationViewController: UIViewController {
     @IBOutlet weak var topHeaderViewConstraint: NSLayoutConstraint!
     @IBOutlet weak var heightHeaderViewConstraint: NSLayoutConstraint!
     
+    @IBOutlet weak var blackView: UIView!
     @IBOutlet weak var topAnimationViewConstraint: NSLayoutConstraint!
+    @IBOutlet weak var heightAnimationViewConstraint: NSLayoutConstraint!
     
     @IBOutlet weak var topUserImageConstraint: NSLayoutConstraint!
     @IBOutlet weak var heightUserImageConstraint: NSLayoutConstraint!
@@ -65,33 +67,52 @@ extension HeaderAnimationViewController : UIScrollViewDelegate {
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
     
-        scrollHeaderView(yScrollView: scrollView.contentOffset.y)
+        scrollUpHeaderView(yScrollView: scrollView.contentOffset.y)
+        scrollDownHeaderView(yScrollView: scrollView.contentOffset.y)
         scrollAnimationView(yScrollView: scrollView.contentOffset.y)
         resizeUserImage(yScrollView: scrollView.contentOffset.y)
         scrollNameLabel(yScrollView: scrollView.contentOffset.y)
         changeLabelColor(yScrollView: scrollView.contentOffset.y)
+        changeBlurAlpha(yScrollView: scrollView.contentOffset.y)
         
     }
     
-    func scrollHeaderView(yScrollView y: CGFloat) {
+    func scrollUpHeaderView(yScrollView y: CGFloat) {
         
-        let headerTop = -(y)
+        let scrollPoint = -(y)
         let initialTop: CGFloat = 0
         
-        if headerTop <= initialTop {
-            topHeaderViewConstraint.constant = headerTop
+        if scrollPoint <= initialTop {
+            topHeaderViewConstraint.constant = scrollPoint
         } else {
             topHeaderViewConstraint.constant = initialTop
         }
     }
     
+    func scrollDownHeaderView(yScrollView y: CGFloat) {
+        
+        let scrollPoint = -(y)
+        let headerHeightDefault: CGFloat = 250
+        let initialTop: CGFloat = 0
+        
+        let imageDefaulTop: CGFloat = 60
+        
+        let animationHeight: CGFloat = 90
+        
+        if scrollPoint >= initialTop {
+            heightHeaderViewConstraint.constant = headerHeightDefault + scrollPoint
+            topUserImageConstraint.constant = imageDefaulTop + scrollPoint
+            heightAnimationViewConstraint.constant = animationHeight + scrollPoint
+        }
+    }
+    
     func scrollAnimationView(yScrollView y: CGFloat) {
         
-        let headerTop = -(y)
+        let scrollPoint = -(y)
         let limitHeaderTop: CGFloat = 30
         
-        if headerTop <= -(limitHeaderTop) {
-            topAnimationViewConstraint.constant = -(headerTop + limitHeaderTop)
+        if scrollPoint <= -(limitHeaderTop) {
+            topAnimationViewConstraint.constant = -(scrollPoint + limitHeaderTop)
         } else {
             topAnimationViewConstraint.constant = 0
         }
@@ -122,7 +143,6 @@ extension HeaderAnimationViewController : UIScrollViewDelegate {
             if imageSize >= imageDefaulSize {
                 heightUserImageConstraint.constant = imageDefaulSize
                 widthUserImageConstraint.constant = imageDefaulSize
-                topUserImageConstraint.constant = imageDefaulTop
             } else {
                 heightUserImageConstraint.constant = imageSize
                 widthUserImageConstraint.constant = imageSize
@@ -149,13 +169,12 @@ extension HeaderAnimationViewController : UIScrollViewDelegate {
         
         if y >= 120 && y < 150{
             
-            let colorUpdate = ((y - 120) * 100 / 5) / 100
+            let percentualUpdate = ((y - 120) * 100 / 5) / 100
             
-            userNameLabel.textColor = UIColor(red: colorUpdate, green: colorUpdate, blue: colorUpdate, alpha: 1)
+            userNameLabel.textColor = UIColor(red: percentualUpdate, green: percentualUpdate, blue: percentualUpdate, alpha: 1)
         }
         
         if y >= 150 {
-            
             userNameLabel.textColor = UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1)
         }
         
@@ -163,6 +182,25 @@ extension HeaderAnimationViewController : UIScrollViewDelegate {
             userNameLabel.textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
         }
         
+    }
     
+    func changeBlurAlpha(yScrollView y: CGFloat) {
+        
+        if y >= 120 && y < 150{
+            
+            let percentualUpdate = (((y - 120) * 100 / 30) / 100) / 2
+            
+            blackView.alpha = percentualUpdate
+        }
+        
+        if y >= 150 {
+            blackView.alpha = 0.5
+        }
+        
+        if y < 120 {
+            blackView.alpha = 0
+        }
+        
+        
     }
 }
