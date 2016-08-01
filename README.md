@@ -1,4 +1,3 @@
 # HeaderAnimation
 
-
-http://g.recordit.co/5sBehlvqQb.gif
+![alt tag](http://g.recordit.co/5sBehlvqQb.gif)
